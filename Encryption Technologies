@@ -1,0 +1,126 @@
+GNU Privacy Guard (GPG)
+
+             Create your pair of GPG keys:
+>>> gpg --gen-key
+when you create the first time you need to enter a pasphress.
+The first thing that this command does is to create a populated .gnupg directory in your home directory:
+
+Encrypting file:
+Note that the -c option indicates that I chose to use symmetric encryption with a passphrase for the file. The passphrase that you enter will be for the file, not for your private key.
+gpg -c yourfile
+
+Look at your new set of files. One slight flaw with this is that GPG makes an encrypted copy of the file, but it also leaves the original, unencrypted file intact:
+
+ls -l
+4. Let's get rid of that unencrypted file with shred . We'll use the -u option to delete the file, and the -z option to overwrite the deleted file with zeros:
+shred -u -z yourfile
+
+cat yourfile.gpg
+
+But let's now say that you no longer need to have this file encrypted, and you want to decrypt it in order to let other people see it. Exit Maggie's account by typing exit . Then, just use gpg with the -d option:
+gpg -d yourfile.gpg
+gpg -o yuornewnameforfile -d /shared/secret.gpg
+
+
+Exmeple:
+>>> gpg --gen-key
+vi secret.txt
+gpg -c secret.txt
+shred -u -z secret.txt
+cat secret.gpg or gpg -d secret.txt
+sudo mkdir /shared
+sudo chown username: /shared
+sudo chmod 755 /shared
+mv secret.gpg /shared
+su username
+cat /shared/secret.gpg
+exit
+gpg -d /shared/secret.gpg
+gpg -o dcryptTheSecretgpg.txt -d /shared/secret.gpg
+
+
+            Encrypting Files With Public Keys
+gpg --help
+apt-get install gnupg
+gpg --list-secret-keys
+gpg --list-keys
+
+Generate keys:
+gpg --full-generate-key
+OR
+gpg --gen-key
+
+Export/Import keys:
+-------------------
+gpg --export -a mirzad > mirzad_public.key
+gpg --import mirzad_public.key
+gpg --export-secret-keys mirzad > mirzad-private-key.key
+gpg --import mirzad-private-key.key
+
+Encrypt & Decrypt
+-----------------
+gpg -e -r "mirzad" text.txt
+gpg --always-trust -e -r "mirzad" text.txt
+gpg -d text.txt.gpg
+gpg --batch --passphrase text.txt.gpg
+
+
+===================================Exemple:
+I have two servers: I want to encrypt with rango's public key from os. I want to send
+my public key to rango in a text mode.
+
+Server 1 = rango@brother:
+Server 2 = os@ubun:
+
+=================================
+<Server 1
+1 os@ubun:~$ gpg --gen-key
+1 Real name: mirzad
+1 Email address: mirzadmirzad@gmail.com
+1 Passphress: xxxxxxxxxx
+Keys folder> .gnupg
+2 os@ubun:~$ gpg --export -a mirzad > mirzad_public.key
+3 scp mirzad_public.key rango@192.168.0.105:/home/rango/
+================================
+===================================================================================
+Now i have os's public.key. I want encrypt file with that public.key and send the encrypted file to os.
+<Server 2
+rango@brother:~$ gpg --import mirzad_public.key
+rango@brother:~$ ls / > secret.txt
+-r, --recipient USER-ID 
+-e, --encrypt
+rango@brother:~$ gpg -e -r "mirzad" secret.txt 
+Use this key anyway? (y/N)  y
+rango@brother:~$ scp secret.txt.gpg os@192.168.0.103:/home/os/
+====================================================================================
+
+=================================
+And now i open the encrypted file which i received from rango.
+<Server 1
+os@ubun:~$ gpg -d secret.txt.gpg 
+=================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
