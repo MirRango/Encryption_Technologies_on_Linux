@@ -103,9 +103,16 @@ os@ubun:~$ gpg -d secret.txt.gpg
 
 
 
+
+
+
+
+
+
 ===========================================================================================
+                        Encrypting partitions with Linux Unified Key Setup (LUKS)
 ===========================================================================================
-             Encrypting partitions with Linux Unified Key Setup (LUKS)
+            
 
 
 
@@ -169,6 +176,97 @@ os@ubun:~$ gpg -d secret.txt.gpg
      
     # unlock the drive using the keyfile
     cryptsetup luksOpen /dev/hdc secret --key-file /root/keyfile
+
+
+
+
+
+
+
+
+====================================================================================================================
+                                               eCryptfs
+====================================================================================================================
+                                
+sudo apt install ecryptfs-utils –y
+
+luks@rango:~$ sudo mkdir crystal
+
+luks@rango:~$ sudo mount -t ecryptfs crystal crystal
+Select key type to use for newly created files: 
+ 1) passphrase
+ 2) tspi
+Selection:           <---- Type 1 and press enter
+Passphrase: 
+Select cipher: 
+ 1) aes: blocksize = 16; min keysize = 16; max keysize = 32    <---- Type 1 and press enter
+ 2) blowfish: blocksize = 8; min keysize = 16; max keysize = 56
+ 3) des3_ede: blocksize = 8; min keysize = 24; max keysize = 24
+ 4) twofish: blocksize = 16; min keysize = 16; max keysize = 32
+ 5) cast6: blocksize = 16; min keysize = 16; max keysize = 32
+ 6) cast5: blocksize = 8; min keysize = 5; max keysize = 16
+Selection [aes]: 1
+Select key bytes:                   <---- Type 3 and press enter
+ 1) 16
+ 2) 32
+ 3) 24
+Selection [16]: 3
+Enable plaintext passthrough (y/n) [n]: n         <---- Type n and press enter        
+Enable filename encryption (y/n) [n]: y            <---- Type y and press enter
+Filename Encryption Key (FNEK) Signature [9ff686e17818b5b9]:   <----  press enter
+Attempting to mount with the following options:
+  ecryptfs_unlink_sigs
+  ecryptfs_fnek_sig=9ff686e17818b5b9
+  ecryptfs_key_bytes=24
+  ecryptfs_cipher=aes
+  ecryptfs_sig=9ff686e17818b5b9
+Mounted eCryptfs
+
+luks@rango:~/crystal$ping -c 5 8.8.8.8 > text.txt
+
+luks@rango:~/crystal$ cat text.txt 
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=14.4 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=117 time=14.5 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=117 time=14.8 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=117 time=14.8 ms
+64 bytes from 8.8.8.8: icmp_seq=5 ttl=117 time=14.6 ms
+
+luks@rango:~$ sudo umount crystal 
+
+luks@rango:~/crystal$ ls
+ECRYPTFS_FNEK_ENCRYPTED.FWaTxcPVS.WpiEXHZ-flUm.bAk-Btfww2tqLq3YXMuowu4EhAdRkQlck2k--
+
+
+luks@rango:~$ sudo mount -t ecryptfs crystal crystal
+Just enter the information you entered above in order to get back your data. The same passphares and others.
+
+luks@rango:~$ ls crystal/
+text.txt
+
+luks@rango:~$ cat crystal/text.txt 
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=14.5 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=117 time=14.8 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=117 time=15.3 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=117 time=14.7 ms
+64 bytes from 8.8.8.8: icmp_seq=5 ttl=117 time=14.8 ms
+
+
+
+
+sudo apt install ecryptfs-utils –y
+sudo mkdir crystal
+sudo mount -t ecryptfs crystal crystal
+ping -c 5 8.8.8.8 > crystal/text.txt
+cat crystal/text.txt
+sudo umount crystal 
+ls crystal/
+ECRYPTFS_FNEK_ENCRYPTED.FWaTxcPVS.WpiEXHZ-flUm.bAk-Btfww2tqLq3YXMuowu4EhAdRkQlck2k--
+sudo mount -t ecryptfs crystal crystal
+ls crystal/
+text.txt
+
 
 
 
