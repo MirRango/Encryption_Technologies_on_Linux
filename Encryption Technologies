@@ -1,7 +1,7 @@
 GNU Privacy Guard (GPG)
 
              Create your pair of GPG keys:
->>> gpg --gen-key
+>>> gpg --gen-key  or gpg --full-generate-key
 when you create the first time you need to enter a pasphress.
 The first thing that this command does is to create a populated .gnupg directory in your home directory:
 
